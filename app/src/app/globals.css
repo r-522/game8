@@ -1,0 +1,410 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&family=M+PLUS+1p:wght@800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --kenka-black: #0a0a0a;
+  --kenka-gold: #c8a84b;
+  --kenka-crimson: #8b1a1a;
+  --kenka-red: #cc2200;
+  --kenka-ink: #1a0505;
+  --kenka-rust: #7a3b2e;
+  --kenka-paper: #e8dcc8;
+  --kenka-steel: #3d3d3d;
+  --kenka-neon: #ff4400;
+  --font-kenka: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --font-gothic: 'M PLUS 1p', 'Hiragino Sans', 'Meiryo', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--kenka-paper);
+  font-family: var(--font-gothic);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#__next, main {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   喧嘩番長7 カスタムUI コンポーネント
+   ============================================================ */
+
+/* ゲージバー（HP・気合・ブチギレ） */
+.kb-gauge {
+  position: relative;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  border: 1px solid #555;
+  overflow: hidden;
+}
+
+.kb-gauge-fill {
+  height: 100%;
+  transition: width 0.15s ease-out;
+  position: relative;
+}
+
+.kb-gauge-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: rgba(255,255,255,0.4);
+}
+
+.kb-gauge-hp .kb-gauge-fill {
+  background: linear-gradient(90deg, #cc0000, #ff4444);
+}
+
+.kb-gauge-sp .kb-gauge-fill {
+  background: linear-gradient(90deg, #0044cc, #4488ff);
+}
+
+.kb-gauge-buchikire .kb-gauge-fill {
+  background: linear-gradient(90deg, #ff6600, #ffaa00);
+  animation: buchikire-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes buchikire-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 墨文字・毛筆スタイル見出し */
+.kb-title {
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  color: var(--kenka-gold);
+  text-shadow:
+    2px 2px 0 #000,
+    -1px -1px 0 #000,
+    3px 3px 8px rgba(0,0,0,0.8);
+  letter-spacing: 0.1em;
+}
+
+/* 漫画的効果音テキスト */
+.kb-effect-text {
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 3px 3px 0 #cc0000, -2px -2px 0 #000, 5px 5px 12px rgba(200,0,0,0.6);
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+/* 集中線 */
+.kb-focus-lines {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 30%,
+    rgba(0,0,0,0.95) 100%
+  );
+  pointer-events: none;
+}
+
+/* 和紙テクスチャ枠 */
+.kb-washi-frame {
+  background:
+    linear-gradient(135deg, rgba(232,220,200,0.08) 0%, transparent 50%),
+    rgba(10,10,10,0.92);
+  border: 1px solid rgba(200,168,75,0.4);
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.8),
+    0 0 1px rgba(200,168,75,0.3);
+  position: relative;
+}
+
+.kb-washi-frame::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(200,168,75,0.15);
+  pointer-events: none;
+}
+
+/* 金属パネル枠 */
+.kb-metal-panel {
+  background: linear-gradient(180deg,
+    rgba(80,70,60,0.9) 0%,
+    rgba(40,35,30,0.95) 100%
+  );
+  border: 2px solid rgba(120,100,80,0.6);
+  border-top-color: rgba(200,168,75,0.5);
+  border-left-color: rgba(200,168,75,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,168,75,0.2);
+}
+
+/* コンボカウンター */
+.kb-combo-counter {
+  font-family: var(--font-kenka);
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ffdd44;
+  text-shadow: 0 0 20px rgba(255,200,0,0.8), 2px 2px 0 #000;
+  animation: combo-flash 0.1s ease-out;
+}
+
+@keyframes combo-flash {
+  from { transform: scale(1.4); }
+  to { transform: scale(1); }
+}
+
+/* タンカ落下フラグメント */
+.tanka-fragment {
+  position: absolute;
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #fff;
+  background: rgba(10,10,10,0.9);
+  border: 2px solid var(--kenka-gold);
+  padding: 6px 16px;
+  border-radius: 2px;
+  text-shadow: 1px 1px 0 #000;
+  animation: tanka-drop 0.3s ease-out;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+}
+
+.tanka-fragment:hover {
+  background: rgba(200,168,75,0.3);
+  transform: scale(1.05);
+}
+
+.tanka-fragment.completed {
+  background: rgba(200,168,75,0.5);
+  border-color: #fff;
+  color: var(--kenka-gold);
+}
+
+@keyframes tanka-drop {
+  from { opacity: 0; transform: translateY(-20px) rotate(-3deg); }
+  to { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+/* メンチ顔選択UI */
+.menchi-face-btn {
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  background: rgba(10,10,10,0.9);
+  border: 2px solid rgba(200,168,75,0.4);
+  color: var(--kenka-paper);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-shadow: 1px 1px 0 #000;
+  position: relative;
+}
+
+.menchi-face-btn:hover, .menchi-face-btn.active {
+  background: rgba(139,26,26,0.8);
+  border-color: var(--kenka-gold);
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(200,0,0,0.4);
+}
+
+/* カットイン演出 */
+.cutin-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.cutin-portrait {
+  animation: cutin-slide 0.15s ease-out;
+}
+
+@keyframes cutin-slide {
+  from { transform: translateX(-100%) skewX(-10deg); opacity: 0; }
+  to { transform: translateX(0) skewX(-3deg); opacity: 1; }
+}
+
+.cutin-flash {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  animation: flash-out 0.3s ease-out forwards;
+  pointer-events: none;
+  z-index: 199;
+}
+
+@keyframes flash-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* 集中線（超気合技演出） */
+.kb-super-lines {
+  position: fixed;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(255,200,0,0.15) 0deg 2deg,
+    transparent 2deg 4deg
+  );
+  animation: super-spin 0.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes super-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 画面シェイク */
+.screen-shake-1 { animation: shake1 0.3s ease-in-out; }
+.screen-shake-2 { animation: shake2 0.4s ease-in-out; }
+.screen-shake-3 { animation: shake3 0.5s ease-in-out; }
+
+@keyframes shake1 {
+  0%, 100% { transform: translate(0,0); }
+  25% { transform: translate(-4px,-2px); }
+  50% { transform: translate(4px,2px); }
+  75% { transform: translate(-2px,4px); }
+}
+@keyframes shake2 {
+  0%, 100% { transform: translate(0,0); }
+  20% { transform: translate(-8px,-4px); }
+  40% { transform: translate(8px,4px); }
+  60% { transform: translate(-4px,8px); }
+  80% { transform: translate(4px,-4px); }
+}
+@keyframes shake3 {
+  0%, 100% { transform: translate(0,0); }
+  15% { transform: translate(-12px,-6px); }
+  30% { transform: translate(12px,6px); }
+  45% { transform: translate(-8px,12px); }
+  60% { transform: translate(8px,-8px); }
+  75% { transform: translate(-4px,4px); }
+  90% { transform: translate(4px,-4px); }
+}
+
+/* ダメージ数字 */
+.damage-number {
+  position: absolute;
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  pointer-events: none;
+  animation: damage-float 1s ease-out forwards;
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+}
+
+.damage-number.normal { font-size: 2rem; color: #ffffff; }
+.damage-number.strong { font-size: 2.5rem; color: #ffdd44; }
+.damage-number.super { font-size: 3.5rem; color: #ff6600; }
+.damage-number.guard { font-size: 1.5rem; color: #88aaff; }
+
+@keyframes damage-float {
+  0% { opacity: 1; transform: translateY(0) scale(1.2); }
+  20% { opacity: 1; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+}
+
+/* フィールドHUDの位置固定 */
+.hud-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.hud-overlay > * {
+  pointer-events: auto;
+}
+
+/* スクロールバー非表示 */
+::-webkit-scrollbar { display: none; }
+
+/* タイトル画面背景 */
+.title-bg {
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(139,26,26,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 0%, rgba(200,168,75,0.1) 0%, transparent 50%),
+    #0a0a0a;
+}
+
+/* ボタンスタイル（任侠） */
+.kb-btn {
+  font-family: var(--font-kenka);
+  font-weight: 900;
+  background: linear-gradient(180deg, rgba(80,20,10,0.9) 0%, rgba(40,10,5,0.95) 100%);
+  border: 2px solid rgba(200,168,75,0.5);
+  color: var(--kenka-paper);
+  padding: 12px 32px;
+  cursor: pointer;
+  letter-spacing: 0.15em;
+  text-shadow: 1px 1px 0 #000;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.kb-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+}
+
+.kb-btn:hover {
+  border-color: var(--kenka-gold);
+  background: linear-gradient(180deg, rgba(139,26,26,0.9) 0%, rgba(80,10,5,0.95) 100%);
+  box-shadow: 0 0 20px rgba(200,0,0,0.3), inset 0 0 10px rgba(200,168,75,0.1);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.kb-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* 特攻服風テキストボーダー */
+.tokkou-border {
+  border: 3px solid var(--kenka-gold);
+  border-radius: 0;
+  position: relative;
+}
+
+.tokkou-border::before,
+.tokkou-border::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--kenka-gold);
+  border-style: solid;
+}
+
+.tokkou-border::before {
+  top: -3px; left: -3px;
+  border-width: 2px 0 0 2px;
+}
+
+.tokkou-border::after {
+  bottom: -3px; right: -3px;
+  border-width: 0 2px 2px 0;
+}
